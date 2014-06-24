@@ -46,7 +46,8 @@ io.sockets.on('connection', function(socket)
     socket.on('sendMessage', function(message)
     {
         var data = {message: message,
-                    username : socket.username};
+                    username: socket.username,
+                    datetime: new Date().toISOString()};
         socket.broadcast.emit('message', data);
         console.log(data.username + ": " + data.message);
     });

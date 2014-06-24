@@ -41,5 +41,5 @@ function setPseudo()
 // =============================================================================
 socket.on('message', function(data)
 {
-    renderMessage(data['message'], data['username']);
+    renderMessage(data['message'], data['username'], data['datetime']);
 });
