@@ -33,7 +33,6 @@ app.get('/', function(req, res)
 
 server.listen(port);
 
-
 // Connection
 // =============================================================================
 io.sockets.on('connection', function(socket)

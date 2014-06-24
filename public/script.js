@@ -13,7 +13,10 @@ $(function()
 // =============================================================================
 function renderMessage(msg, username, date)
 {
-    $('#chatEntries').append('<div class="message"><p>' + date + ' | ' + username + ' : ' + msg + '</p></div>');
+	var p = $('<p></p>');
+	p.text(date + ' | ' + username + ' : ' + msg);
+	var message = $('<div class="message"></div>').text(date + ' | ' + username + ' : ' + msg);
+    $('#chatEntries').append(message);
 }
 
 function sendMessage()
