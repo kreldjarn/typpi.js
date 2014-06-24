@@ -1,0 +1,14 @@
+{
+  "name": "typpi",
+  "version": "0.0.0",
+  "description": "typpi",
+  "main": "typpi.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "typpi"
+  ],
+  "author": "typpi",
+  "license": "ISC"
+}

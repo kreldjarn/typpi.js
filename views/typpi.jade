@@ -1,0 +1,17 @@
+doctype html
+html
+    head
+        title typpi.js
+        script(src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js')
+        script(src="/socket.io/socket.io.js")
+        script(src="script.js")
+    body
+        div.container
+            header
+                h1 typpi.js
+            input(type='text')#usernameInput
+            button#pseudoSet Velja nafn
+            div#chatEntries
+            div#chatControls
+                input(type='text')#messageInput
+                button#submit Senda
