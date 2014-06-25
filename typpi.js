@@ -9,7 +9,7 @@
 var http = require('http');
 var express = require('express');
 var jade = require('jade');
-
+var stylus = require('stylus');
 
 
 // Setup
@@ -25,6 +25,12 @@ app.set("view options", {layout: false});
 
 // Routing
 app.use(express.static(__dirname + '/public'));
+app.use(stylus.middleware({
+    src: __dirname + '/stylesheets',
+    dest: __dirname + '/public',
+    debug: true,
+    force: true
+}));
 
 // Store usernames in an object so we can easily remove on disconnect
 var users = {};
@@ -39,6 +45,7 @@ server.listen(port);
 
 // Connection
 // =============================================================================
+
 io.sockets.on('connection', function(socket)
 {
     var loggedIn = false;
@@ -170,6 +177,12 @@ var Name = {
               'Legvatns',
               'Sveppa',
               'blog.central.is/'],
+              'Drasl',
+              'Ógeðs',
+              'Truntu',
+              'Frussu',
+              'Pussu',
+              'Fröllu'],
     postfix : ['maður',
                'sali',
                'mauk',
@@ -197,6 +210,8 @@ var Name = {
                'elskhugi',
                'Group hf.',
                'prestur'],
+               'sinnep',
+               'pylsa'],
     random : function()
     {
         return this.prefix[Math.floor(Math.random() * this.prefix.length)] + 
