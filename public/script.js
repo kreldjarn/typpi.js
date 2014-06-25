@@ -1,3 +1,12 @@
+/**********************
+ *                    *
+ *      typpi.js      *
+ *                    *
+ **********************/
+// Basic chat client with methods for rendering sent and received messages in
+// the DOM
+
+
 // DOM node variables
 // =============================================================================
 var messageInput, usernameInput, setUsername, chatEntries, chatControls,
@@ -26,11 +35,62 @@ function renderMessage(msg, username, date)
 				  '<span class="message-body">' + sanitize(msg) + '</span>';
 	message = $('<p class="message">').append(message).css('color', getColor(username));
 	log(message);
+	updateNotifications();
 }
 
 function numUsersMessage(data)
 {
 	numUsers.text('Notendur: ' + data.numUsers);
+}
+
+function renderUserList(data)
+{
+	list = data.users;
+	userList.empty();
+	$.each(list, function(key, username)
+	{
+		var p = $('<p></p>').text(username).css('color', getColor(username));
+		userList.append(p);
+	});
+}
+
+// Writes to the dom
+function log(data)
+{
+	chatEntries.append(data);
+}
+
+function sendMessage()
+{
+	msg = sanitize(messageInput.val());
+	if (msg != '') 
+	{
+		var date = new Date();
+        var date = date.getHours() + ":" + pad(date.getMinutes(), 2);
+		socket.emit('sendMessage', msg);
+		renderMessage(msg, 'Ég', date);
+		messageInput.val('');
+	}
+}
+
+function setName()
+{
+	name = sanitize(usernameInput.val());
+	// If no name is selected, a random name will be generated
+	socket.emit('setUsername', name);
+	chatControls.show();
+	usernameInput.hide();
+	setUsername.hide();
+	loggedIn = true;
+}
+
+function updateNotifications()
+{
+	// Check windowFocus variable from notify.js
+	if (windowFocus) return;
+	// notifications is declared in notify.js
+	notifications++;
+	document.title = '(' + notifications + ') typpi.js';
 }
 
 // Typing monitor
@@ -82,50 +142,6 @@ function isTyping()
 			}
 		}, TYPING_TIMER);
 	}
-}
-
-function renderUserList(data)
-{
-	list = data.users;
-	userList.empty();
-	$.each(list, function(key, username)
-	{
-		var p = $('<p></p>').text(username).css('color', getColor(username));
-		userList.append(p);
-	});
-}
-
-// Writes to the dom
-function log(data)
-{
-	chatEntries.append(data);
-}
-
-function sendMessage()
-{
-	msg = sanitize(messageInput.val());
-	if (msg != '') 
-	{
-		var date = new Date();
-        var date = date.getHours() + ":" + pad(date.getMinutes(), 2);
-		socket.emit('sendMessage', msg);
-		renderMessage(msg, 'Ég', date);
-		messageInput.val('');
-	}
-}
-
-function setName()
-{
-	name = sanitize(usernameInput.val());
-	// If no name is selected, a random name will be generated
-	//if (name != "")
-	//{
-	socket.emit('setUsername', name);
-	chatControls.show();
-	usernameInput.hide();
-	setUsername.hide();
-	loggedIn = true;
-	//}
 }
 
 // Utilities

@@ -1,4 +1,12 @@
+/**********************
+ *                    *
+ *      typpi.js      *
+ *                    *
+ **********************/
+// Random name generator module
 
+// TODO:
+// parse values from .csv
 prefix = ['Bjúgna',
           'Pylsu',
           'Epla',
