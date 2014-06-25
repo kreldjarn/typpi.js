@@ -54,6 +54,7 @@ function getTypingMessage(data)
 	});
 }
 
+var t;
 function isTyping()
 {
 	if (loggedIn)
@@ -66,7 +67,8 @@ function isTyping()
 		var last = (new Date()).getTime();
 
 		// Check whether user is still typing
-		setTimeout(function()
+		clearTimeout(t);
+		t = setTimeout(function()
 		{
 			var now = (new Date()).getTime();
 			var delta = now - last;
