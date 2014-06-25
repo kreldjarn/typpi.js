@@ -209,7 +209,7 @@ var Name = {
                'neytandi',
                'elskhugi',
                'Group hf.',
-               'prestur'],
+               'prestur',
                'sinnep',
                'pylsa'],
     random : function()
