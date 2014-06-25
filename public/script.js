@@ -1,7 +1,7 @@
 // DOM node variables
 // =============================================================================
 var messageInput, usernameInput, setUsername, chatEntries, chatControls,
-    typingMonitor;
+    typingMonitor, userList;
 
 // Setup
 // =============================================================================
@@ -21,7 +21,9 @@ var TYPING_TIMER = 3210;
 // =============================================================================
 function renderMessage(msg, username, date)
 {
-	var message = date + ' | <span class="username">' + username + ' :</span> ' + msg;
+	var message = '<span class="timestamp">' + date + ' | </span>' +
+				  '<span class="username">' + username + ' :</span> ' +
+				  '<span class="message-body">' + msg + '</span>';
 	message = $('<p class="message">').append(message).css('color', getColor(username));
 	log(message);
 }
@@ -54,6 +56,7 @@ function getTypingMessage(data)
 	});
 }
 
+// Local timeout for typing, needs to be cleared before it's set.
 var t;
 function isTyping()
 {
@@ -66,8 +69,8 @@ function isTyping()
 		}
 		var last = (new Date()).getTime();
 
-		// Check whether user is still typing
 		clearTimeout(t);
+		// Check whether user is still typing
 		t = setTimeout(function()
 		{
 			var now = (new Date()).getTime();
@@ -79,6 +82,17 @@ function isTyping()
 			}
 		}, TYPING_TIMER);
 	}
+}
+
+function renderUserList(data)
+{
+	list = data.users;
+	userList.empty();
+	$.each(list, function(key, username)
+	{
+		var p = $('<p></p>').text(username).css('color', getColor(username));
+		userList.append(p);
+	});
 }
 
 // Writes to the dom
@@ -93,7 +107,7 @@ function sendMessage()
 	if (msg != '') 
 	{
 		var date = new Date();
-        var date = date.getHours() + ":" + date.getMinutes()
+        var date = date.getHours() + ":" + Utils.pad(date.getMinutes(), 2);
 		socket.emit('sendMessage', msg);
 		renderMessage(msg, 'Ég', date);
 		messageInput.val('');
@@ -146,22 +160,27 @@ socket.on('message', function(data)
 
 socket.on('userJoined', function(data)
 {
-	log(data.username + ' sameinaðist alheimssálinni.');
+	var msg = $('<p class="announcement"></p>').text(data.username + ' sameinaðist alheimssálinni.');
+	log(msg);
 	numUsersMessage(data);
+	renderUserList(data);
 });
 
 socket.on('userLeft', function(data)
 {
-	log(data.username + ' yfirgaf hjörðina.');
+	var msg = $('<p class="announcement"></p>').text(data.username + ' yfirgaf hjörðina.');
+	log(msg);
 	loggedIn = false;
 	numUsersMessage(data);
+	renderUserList(data);
 	stopTyping(data);
 });
 
 socket.on('login', function(data)
 {
 	numUsersMessage(data);
-	log($('<p class="announcement">Velkomin(n) á typpi.is</p>'));
+	renderUserList(data);
+	log($('<p class="announcement"></p>').text('Velkomin(n) á typpi.is, þú heitir ' + data.username));
 })
 
 socket.on('startTyping', function(data)
@@ -175,6 +194,19 @@ socket.on('stopTyping', function(data)
 });
 
 
+var Utils = {
+    pad     : function(number, length) {
+   
+        var str = '' + number;
+        while (str.length < length) {
+            str = '0' + str;
+        }
+       
+        return str;
+    
+    }
+}
+
 // Sequential logic
 // =============================================================================
 $(document).ready(function()
@@ -186,6 +218,7 @@ $(document).ready(function()
 	chatControls = $('#chatControls');
 	typingMonitor = $('#typingMonitor');
 	numUsers = $('#numUsers');
+	userList = $('#userList');
 
 	messageInput.on('input', function()
 	{

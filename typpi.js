@@ -67,11 +67,14 @@ io.sockets.on('connection', function(socket)
 
         // Echo locally
         socket.emit('login', {
+            username: socket.username,
+            users: users,
             numUsers: numUsers
         });
         // Echo globally
         socket.broadcast.emit('userJoined', {
             username: socket.username,
+            users: users,
             numUsers: numUsers
         });
     });
@@ -95,11 +98,14 @@ io.sockets.on('connection', function(socket)
     socket.on('sendMessage', function(message)
     {
         var date = new Date();
-        var date = date.getHours() + ":" + date.getMinutes()
+        var date = date.getHours() + ":" + Utils.pad(date.getMinutes(), 2);
         var data = {message: message,
             username: socket.username,
             datetime: date};
         socket.broadcast.emit('message', data);
+        socket.broadcast.emit('stopTyping', {
+            username: socket.username
+        });
         console.log(data.username + ": " + data.message);
     });
 
@@ -113,12 +119,26 @@ io.sockets.on('connection', function(socket)
     
             socket.broadcast.emit('userLeft', {
                 username: socket.username,
+                users: users,
                 numUsers: numUsers
             });
         }
     });
 });
 
+
+var Utils = {
+    pad     : function(number, length) {
+   
+        var str = '' + number;
+        while (str.length < length) {
+            str = '0' + str;
+        }
+       
+        return str;
+    
+    }
+}
 
 var Name = {
     prefix : ['Bjúgna',
