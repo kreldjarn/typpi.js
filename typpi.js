@@ -176,7 +176,7 @@ var Name = {
               'Forsendu',
               'Legvatns',
               'Sveppa',
-              'blog.central.is/'],
+              'blog.central.is/',
               'Drasl',
               'Ógeðs',
               'Truntu',
