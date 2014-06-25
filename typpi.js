@@ -9,7 +9,7 @@
 var http = require('http');
 var express = require('express');
 var jade = require('jade');
-
+var stylus = require('stylus');
 
 
 // Setup
@@ -25,6 +25,12 @@ app.set("view options", {layout: false});
 
 // Routing
 app.use(express.static(__dirname + '/public'));
+app.use(stylus.middleware({
+    src: __dirname + '/stylesheets',
+    dest: __dirname + '/public',
+    debug: true,
+    force: true
+}));
 
 app.get('/', function(req, res)
 {
@@ -35,8 +41,9 @@ server.listen(port);
 
 // Connection
 // =============================================================================
+
 io.sockets.on('connection', function(socket)
-{    
+{
     socket.on('setUsername', function(data)
     {
         socket.username = data;
