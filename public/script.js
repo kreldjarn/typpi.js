@@ -117,14 +117,15 @@ function sendMessage()
 function setName()
 {
 	name = sanitize(usernameInput.val());
-	if (name != "")
-	{
-		socket.emit('setUsername', name);
-		chatControls.show();
-		usernameInput.hide();
-		setUsername.hide();
-		loggedIn = true;
-	}
+	// If no name is selected, a random name will be generated
+	//if (name != "")
+	//{
+	socket.emit('setUsername', name);
+	chatControls.show();
+	usernameInput.hide();
+	setUsername.hide();
+	loggedIn = true;
+	//}
 }
 
 // Utilities
