@@ -23,7 +23,7 @@ function renderMessage(msg, username, date)
 {
 	var message = '<span class="timestamp">' + date + ' | </span>' +
 				  '<span class="username">' + username + ' :</span> ' +
-				  '<span class="message-body">' + msg + '</span>';
+				  '<span class="message-body">' + sanitize(msg) + '</span>';
 	message = $('<p class="message">').append(message).css('color', getColor(username));
 	log(message);
 }
@@ -107,7 +107,7 @@ function sendMessage()
 	if (msg != '') 
 	{
 		var date = new Date();
-        var date = date.getHours() + ":" + Utils.pad(date.getMinutes(), 2);
+        var date = date.getHours() + ":" + pad(date.getMinutes(), 2);
 		socket.emit('sendMessage', msg);
 		renderMessage(msg, 'Ég', date);
 		messageInput.val('');
@@ -132,7 +132,7 @@ function setName()
 // =============================================================================
 function sanitize(input)
 {
-	return $('<div/>').text(input).text();
+	return $('<div>').text(input).text();
 }
 
 var COLORS = [
@@ -195,18 +195,15 @@ socket.on('stopTyping', function(data)
 });
 
 
-// TODO:
-// Common script - should be wrapped in utils module, accessible by both front
-// and back end.
-var Utils = {
-    pad     : function(number, length) {
-   
-        var str = '' + number;
-        while (str.length < length) {
-            str = '0' + str;
-        }
-        return str;
-    }
+
+pad = function(number, length)
+{
+	var str = '' + number;
+	while (str.length < length)
+	{
+	    str = '0' + str;
+	}
+	return str;
 }
 
 // Sequential logic

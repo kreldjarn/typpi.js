@@ -10,7 +10,8 @@ var http = require('http');
 var express = require('express');
 var jade = require('jade');
 var stylus = require('stylus');
-
+var utils = require('./utils');
+var name = require('./name_generator');
 
 // Setup
 // =============================================================================
@@ -62,11 +63,11 @@ io.sockets.on('connection', function(socket)
                 numUsers: numUsers
             });
         }
-        if (username === '') username = Name.random();
+        if (username === '') username = name.random();
         // Check if username already exists within user pool
         while (users[username])
         {
-            username = Name.random();
+            username = name.random();
         }
         socket.username = username;
         users[username] = username;
@@ -106,7 +107,7 @@ io.sockets.on('connection', function(socket)
     socket.on('sendMessage', function(message)
     {
         var date = new Date();
-        var date = date.getHours() + ":" + Utils.pad(date.getMinutes(), 2);
+        var date = date.getHours() + ":" + utils.pad(date.getMinutes(), 2);
         var data = {message: message,
             username: socket.username,
             datetime: date};
@@ -134,101 +135,3 @@ io.sockets.on('connection', function(socket)
     });
 });
 
-// TODO:
-// Common script - should be wrapped in utils module, accessible by both front
-// and back end.
-var Utils = {
-    pad     : function(number, length) {
-   
-        var str = '' + number;
-        while (str.length < length) {
-            str = '0' + str;
-        }
-        return str;
-    }
-}
-
-var Name = {
-    prefix : ['Bjúgna',
-              'Pylsu',
-              'Epla',
-              'Eitur',
-              'Typpa',
-              'Fugla',
-              'Vél-',
-              'Gúrku',
-              'Tungl',
-              'Þang',
-              'Stál',
-              'Barna',
-              'Salt',
-              'Eðlu',
-              'Sveskju',
-              'Skúffu',
-              'Sorgar',
-              'Gleði',
-              'Saur',
-              'Þarma',
-              'Kakó',
-              'Kaffi',
-              'Svína',
-              'Ellilífeyris',
-              'Forsendu',
-              'Legvatns',
-              'Sveppa',
-              'blog.central.is/',
-              'Drasl',
-              'Ógeðs',
-              'Truntu',
-              'Frussu',
-              'Pussu',
-              'Fröllu',
-              'Ljóða',
-              'Krabba',
-              'Rusla',
-              'Fiski',
-              'Hárgreiðslu',
-              'Niðursuðu'],
-    postfix : ['maður',
-               'sali',
-               'mauk',
-               'hrúga',
-               'messa',
-               'land.is',
-               'flaska',
-               'fótur',
-               'grautur',
-               'haus',
-               'kaka',
-               'partí',
-               'samkoma',
-               'samfélag',
-               'söfnuður',
-               'sölumaður',
-               'bóndi',
-               'fíkill',
-               'bolla',
-               'bolli',
-               'vatn',
-               'skjaldborgin',
-               'brestur',
-               'neytandi',
-               'elskhugi',
-               'Group hf.',
-               'prestur',
-               'sinnep',
-               'pylsa',
-               'fræðingur',
-               'tæknir',
-               'dúlla',
-               'krútt',
-               'sprengja',
-               'skvísa',
-               'hönnuður',
-               'listamaður'],
-    random : function()
-    {
-        return this.prefix[Math.floor(Math.random() * this.prefix.length)] + 
-               this.postfix[Math.floor(Math.random() * this.postfix.length)];
-    }
-}
