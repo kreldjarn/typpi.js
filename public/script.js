@@ -194,6 +194,9 @@ socket.on('stopTyping', function(data)
 });
 
 
+// TODO:
+// Common script - should be wrapped in utils module, accessible by both front
+// and back end.
 var Utils = {
     pad     : function(number, length) {
    
@@ -201,9 +204,7 @@ var Utils = {
         while (str.length < length) {
             str = '0' + str;
         }
-       
         return str;
-    
     }
 }
 
