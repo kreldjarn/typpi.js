@@ -161,7 +161,13 @@ var Name = {
               'Stál',
               'Barna',
               'Salt',
-              'Eðlu'],
+              'Eðlu',
+              'Drasl',
+              'Ógeðs',
+              'Truntu',
+              'Frussu',
+              'Pussu',
+              'Fröllu'],
     postfix : ['maður',
                'sali',
                'mauk',
@@ -174,7 +180,9 @@ var Name = {
                'land.is',
                'flaska',
                'fótur',
-               'grautur'],
+               'grautur',
+               'sinnep',
+               'pylsa'],
     random : function()
     {
         return this.prefix[Math.floor(Math.random() * this.prefix.length)] + 
