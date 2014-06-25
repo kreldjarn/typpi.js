@@ -4,30 +4,6 @@
  *                    *
  **********************/
 
-var prefix = ['Bjúgna',
-              'Pylsu',
-              'Epla',
-              'Eitur',
-              'Typpa',
-              'Fugla',
-              'Vél',
-              'Gúrku',
-              'Tungl',
-              'Þang',
-              'Bjór'];
-
-var postfix = ['maður',
-               'sali',
-               'mauk',
-               'hrúga',
-               'messa',
-               'krækir',
-               'bróðir',
-               'systir',
-               'bani',
-               'land.is',
-               'flaska']
-
 // Requirements
 // =============================================================================
 var http = require('http');
@@ -69,13 +45,20 @@ io.sockets.on('connection', function(socket)
 
     socket.on('setUsername', function(username)
     {
-        
-
+        // If user is changing their name
+        if (loggedIn)
+        {
+            delete users[socket.username];
+            --numUsers;
+            socket.broadcast.emit('userLeft', {
+                username: socket.username,
+                numUsers: numUsers
+            });
+        }
         // Check if username already exists within user pool
         while (users[username])
         {
-            username = prefix[Math.floor(Math.random() * prefix.length)] + 
-                       postfix[Math.floor(Math.random() * postfix.length)];
+            username = Name.random();
         }
         socket.username = username;
         users[username] = username;
@@ -93,17 +76,81 @@ io.sockets.on('connection', function(socket)
         });
     });
 
-    //socket.on('setUsername', function(data)
-    //{
-    //    socket.username = data;
-    //});
+    // Broadcast when user starts typing
+    socket.on('startTyping', function ()
+    {
+        socket.broadcast.emit('startTyping', {
+            username: socket.username
+        });
+    });
+    
+    // Broadcast when user stops typing
+    socket.on('stopTyping', function ()
+    {
+        socket.broadcast.emit('stopTyping', {
+            username: socket.username
+        });
+    });
 
     socket.on('sendMessage', function(message)
     {
+        var date = new Date();
+        var date = date.getHours() + ":" + date.getMinutes()
         var data = {message: message,
             username: socket.username,
-            datetime: new Date().toISOString()};
-            socket.broadcast.emit('message', data);
-            console.log(data.username + ": " + data.message);
-        });
+            datetime: date};
+        socket.broadcast.emit('message', data);
+        console.log(data.username + ": " + data.message);
+    });
+
+    socket.on('disconnect', function ()
+    {
+        // Remove the username from global usernames list
+        if (loggedIn)
+        {
+            delete users[socket.username];
+            --numUsers;
+    
+            socket.broadcast.emit('userLeft', {
+                username: socket.username,
+                numUsers: numUsers
+            });
+        }
+    });
 });
+
+
+var Name = {
+    prefix : ['Bjúgna',
+              'Pylsu',
+              'Epla',
+              'Eitur',
+              'Typpa',
+              'Fugla',
+              'Vél',
+              'Gúrku',
+              'Tungl',
+              'Þang',
+              'Stál',
+              'Barna',
+              'Salt',
+              'Eðlu'],
+    postfix : ['maður',
+               'sali',
+               'mauk',
+               'hrúga',
+               'messa',
+               'krækir',
+               'bróðir',
+               'systir',
+               'bani',
+               'land.is',
+               'flaska',
+               'fótur',
+               'grautur'],
+    random : function()
+    {
+        return this.prefix[Math.floor(Math.random() * this.prefix.length)] + 
+               this.postfix[Math.floor(Math.random() * this.postfix.length)];
+    }
+}
