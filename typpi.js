@@ -10,7 +10,6 @@
 var http = require('http');
 var express = require('express');
 var jade = require('jade');
-var stylus = require('stylus');
 var utils = require('./utils');
 var name = require('./name_generator');
 
