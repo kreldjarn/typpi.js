@@ -78,6 +78,7 @@ function setName()
 	chatControls.show();
 	usernameInput.hide();
 	setUsername.hide();
+	randomNameRequest.hide();
 	loggedIn = true;
 }
 
@@ -197,6 +198,7 @@ socket.on('login', function(data)
 	numUsersMessage(data);
 	renderUserList(data);
 	log($('<p class="announcement"></p>').text('Velkomin(n) á typpi.is, þú heitir ' + data.username));
+	messageInput.focus();
 })
 
 socket.on('startTyping', function(data)
@@ -213,6 +215,7 @@ socket.on('stopTyping', function(data)
 socket.on('serveNickname', function(data)
 {
 	usernameInput.val(data.username);
+	usernameInput.focus();
 });
 
 
@@ -249,4 +252,18 @@ $(document).ready(function()
 	{
 		socket.emit('requestNickname');
 	});
+
+	messageInput.on('keydown', function(e)
+	{
+		if (e.keyCode == 13)
+			sendMessage();
+	});
+
+	usernameInput.on('keydown', function(e)
+	{
+		if (e.keyCode == 13)
+			setName();
+	});
+
+	usernameInput.focus();
 });

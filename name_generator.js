@@ -138,7 +138,8 @@ postfix = ['maður',
            'lánasjóður',
            'moli',
            'hrúður',
-           'drasl'];
+           'drasl',
+           'barn'];
 
 function generate()
 {
