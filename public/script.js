@@ -152,8 +152,8 @@ function sanitize(input)
 }
 
 var COLORS = [
-'#91004B', '#00918A', '#DB4D00', '#008EDB', '#8C00FF',
-'#8AA600', '#008AA6', '#7A6A9C', '#6E2323'
+'#91004B', '#00918A', '#DB4D00', '#008EDB', '#8C00FF', '#51BBBD', '#D9B723',
+'#8AA600', '#008AA6', '#7A6A9C', '#6E2323', '#9C064A', '#D9237E', 
 ];
 
 function getColor(str)

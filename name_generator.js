@@ -72,7 +72,8 @@ prefix = ['Bjúgna',
           'Sykur',
           'Eiturlyfja',
           'Kisu',
-          'Hvolpa'];
+          'Hvolpa',
+          'Þvag'];
 
 postfix = ['maður',
            'sali',
