@@ -10,7 +10,7 @@
 // DOM node variables
 // =============================================================================
 var messageInput, usernameInput, setUsername, chatEntries, chatControls,
-    typingMonitor, userList;
+    typingMonitor, userList, randomNameRequest;
 
 // Setup
 // =============================================================================
@@ -209,6 +209,11 @@ socket.on('stopTyping', function(data)
 	stopTyping(data);
 });
 
+// Response from RNG request
+socket.on('serveNickname', function(data)
+{
+	usernameInput.val(data.username);
+});
 
 
 pad = function(number, length)
@@ -227,6 +232,7 @@ $(document).ready(function()
 {
 	messageInput = $('#messageInput');
 	usernameInput = $('#usernameInput');
+	randomNameRequest = $('#randomNameRequest');
 	setUsername = $('#setUsername');
 	chatEntries = $('#chatEntries');
 	chatControls = $('#chatControls');
@@ -237,5 +243,10 @@ $(document).ready(function()
 	messageInput.on('input', function()
 	{
 	    isTyping();
+	});
+
+	randomNameRequest.on('click', function()
+	{
+		socket.emit('requestNickname');
 	});
 });
