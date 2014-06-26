@@ -54,7 +54,19 @@ prefix = ['Bjúgna',
           'Móðursýkis',
           'Bauna',
           'Stjórnmála',
-          'Forseta'];
+          'Forseta',
+          'Fitu',
+          'Kransæða',
+          'Háls, nef og eyrna',
+          'Gin og klaufa',
+          'Sleik',
+          'Kántrý',
+          'Diskó',
+          'Legganga',
+          'Frygðar',
+          'Klám',
+          'Tilfinninga',
+          'Getnaðar'];
 
 postfix = ['maður',
            'sali',
@@ -99,7 +111,17 @@ postfix = ['maður',
            'menni',
            'læknir',
            'frömuður',
-           'frumkvöðull'];
+           'frumkvöðull',
+           'fullnæging',
+           'örlög',
+           'veiki',
+           'rass',
+           'stuna',
+           'sýking',
+           'galdur',
+           'pizza',
+           'heilkenni',
+           'kæfa'];
 
 exports.random  = function()
 {

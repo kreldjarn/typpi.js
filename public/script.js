@@ -23,17 +23,17 @@ $(function() {
 	$('#submit').on('click', function() {sendMessage();});
 });
 
-var TYPING_TIMER = 3210;
+var TYPING_TIMER = 2000;
 
 
 // Functions
 // =============================================================================
 function renderMessage(msg, username, date)
 {
-	var message = '<span class="timestamp">' + date + ' | </span>' +
-				  '<span class="username">' + username + ' :</span> ' +
-				  '<span class="message-body">' + sanitize(msg) + '</span>';
-	message = $('<p class="message">').append(message).css('color', getColor(username));
+	var timestamp = $('<span class="timestamp"></span>').text(date + ' | ');
+	var name = $('<span class="username"></span>').text(sanitize(username) + ' : ');
+	var body = $('<span class="message-body"></span>').text(sanitize(msg));
+	message = $('<p class="message">').append(timestamp).append(name).append(body).css('color', getColor(username));
 	log(message);
 	updateNotifications();
 }
