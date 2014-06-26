@@ -57,8 +57,7 @@ prefix = ['Bjúgna',
           'Forseta',
           'Fitu',
           'Kransæða',
-          'Háls, nef og eyrna',
-          'Gin og klaufa',
+          'Háls-, nef- og eyrna',
           'Sleik',
           'Kántrý',
           'Diskó',
@@ -66,7 +65,12 @@ prefix = ['Bjúgna',
           'Frygðar',
           'Klám',
           'Tilfinninga',
-          'Getnaðar'];
+          'Getnaðar',
+          'Virðingar',
+          'Gæða',
+          'Drauga',
+          'Sykur',
+          'Eiturlyfja'];
 
 postfix = ['maður',
            'sali',
@@ -121,12 +125,32 @@ postfix = ['maður',
            'galdur',
            'pizza',
            'heilkenni',
-           'kæfa'];
+           'kæfa',
+           'klám',
+           'draugur',
+           'kisa',
+           'klístur',
+           'áróður',
+           'hvolpur',
+           'tæki',
+           'lánasjóður',
+           'moli',
+           'hrúður'];
 
-exports.random  = function()
+function generate()
 {
     return prefix[Math.floor(Math.random() * prefix.length)] + 
            postfix[Math.floor(Math.random() * postfix.length)];
+}
+
+var FORBIDDEN_NAMES = ['Barnaklám', 'blog.central.is/Prinsessa69@hotmail.com'];
+
+exports.random  = function()
+{
+    do
+        name = generate();
+    while (FORBIDDEN_NAMES.indexOf(name) >= 0)
+    return name;
 }
 
 
