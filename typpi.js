@@ -28,10 +28,10 @@ app.set("view options", {layout: false});
 // Routing
 app.use(express.static(__dirname + '/public'));
 app.use(stylus.middleware({
-    src: __dirname + '/stylesheets',
-    dest: __dirname + '/public',
-    debug: true,
-    force: true
+    src: __dirname + '/public'
+    //dest: __dirname + '/public',
+    //debug: true,
+    //force: true
 }));
 
 // Store usernames in an object so we can easily remove on disconnect

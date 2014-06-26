@@ -23,9 +23,6 @@ $(function() {
 	$('#submit').on('click', function() {sendMessage();});
 });
 
-var TYPING_TIMER = 2000;
-
-
 // Functions
 // =============================================================================
 function renderMessage(msg, username, date)
@@ -116,8 +113,10 @@ function getTypingMessage(data)
 	});
 }
 
-// Local timeout for typing, needs to be cleared before it's set.
+// Local timeout for typing, needs to be cleared before it's set again,
+// so as not to trigger multiple callbacks.
 var t;
+var TYPING_TIMER = 2000;
 function isTyping()
 {
 	if (loggedIn)

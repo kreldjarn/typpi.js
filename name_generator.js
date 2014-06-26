@@ -70,7 +70,9 @@ prefix = ['Bjúgna',
           'Gæða',
           'Drauga',
           'Sykur',
-          'Eiturlyfja'];
+          'Eiturlyfja',
+          'Kisu',
+          'Hvolpa'];
 
 postfix = ['maður',
            'sali',
@@ -135,7 +137,8 @@ postfix = ['maður',
            'tæki',
            'lánasjóður',
            'moli',
-           'hrúður'];
+           'hrúður',
+           'drasl'];
 
 function generate()
 {
