@@ -177,7 +177,7 @@ socket.on('message', function(data)
 
 socket.on('userJoined', function(data)
 {
-	var msg = $('<p class="announcement"></p>').text(data.username + ' sameinaðist alheimssálinni.');
+	var msg = $('<p class="announcement"></p>').text(data.username + ' skráði sig inn á typpi.is');
 	log(msg);
 	numUsersMessage(data);
 	renderUserList(data);
@@ -185,7 +185,7 @@ socket.on('userJoined', function(data)
 
 socket.on('userLeft', function(data)
 {
-	var msg = $('<p class="announcement"></p>').text(data.username + ' yfirgaf hjörðina.');
+	var msg = $('<p class="announcement"></p>').text(data.username + ' yfirgaf typpi.is');
 	log(msg);
 	loggedIn = false;
 	numUsersMessage(data);
