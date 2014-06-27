@@ -74,7 +74,9 @@ prefix = ['Bjúgna',
           'Kisu',
           'Hvolpa',
           'Þvag',
-          'Kleinu'];
+          'Kleinu',
+          'Ástar',
+          'Haturs'];
 
 postfix = ['maður',
            'sali',
@@ -141,7 +143,7 @@ postfix = ['maður',
            'moli',
            'hrúður',
            'drasl',
-           'barn'
+           'barn',
            'blóð',
            'vessi',
            'safi',
