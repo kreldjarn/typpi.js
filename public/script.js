@@ -28,8 +28,8 @@ $(function() {
 function renderMessage(msg, username, date)
 {
 	var timestamp = $('<span class="timestamp"></span>').text(date + ' | ');
-	var name = $('<span class="username"></span>').text(sanitize(username) + ' : ');
-	var body = $('<span class="message-body"></span>').text(sanitize(msg));
+	var name = $('<span class="username"></span>').text(username + ' : ');
+	var body = $('<span class="message-body"></span>').append(escapeHTML(msg).autoLink());
 	message = $('<p class="message">').append(timestamp).append(name).append(body).css('color', getColor(username));
 	log(message);
 	updateNotifications();
@@ -151,9 +151,18 @@ function sanitize(input)
 	return $('<div>').text(input).text();
 }
 
+// Hack - uses the DOM, but is faster than chaining .replace()
+function escapeHTML( string )
+{
+    var pre = document.createElement('pre');
+    var text = document.createTextNode(string);
+    pre.appendChild(text);
+    return pre.innerHTML;
+}
+
 var COLORS = [
-'#91004B', '#00918A', '#DB4D00', '#008EDB', '#8C00FF', '#51BBBD', '#D9B723',
-'#8AA600', '#008AA6', '#7A6A9C', '#6E2323', '#9C064A', '#D9237E', 
+	'#91004B', '#00918A', '#DB4D00', '#008EDB', '#8C00FF', '#51BBBD', '#D9B723',
+	'#8AA600', '#008AA6', '#7A6A9C', '#6E2323', '#9C064A', '#D9237E', 
 ];
 
 function getColor(str)
@@ -228,6 +237,7 @@ pad = function(number, length)
 	}
 	return str;
 }
+
 
 // Sequential logic
 // =============================================================================
