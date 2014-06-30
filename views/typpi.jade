@@ -2,11 +2,18 @@ doctype html
 html
     head
         title typpi.js
-        script(src="notify.js")
+        script(src="notify.js"
+        link (href='http://fonts.googleapis.com/css?family=Exo+2:400,500italic,300'
+            rel='stylesheet' type='text/css')
+        link(rel="stylesheet" href="style.css")
+        meta(charset="utf-8")
+
     body
         div.container
-            input(type='text')#usernameInput
-            button#setUsername Velja nafn
+            div#login
+                input(type='text')#usernameInput
+                button#setUsername Velja nafn
+
             div#chatEntries
             div#chatControls
                 input(type='text')#messageInput
