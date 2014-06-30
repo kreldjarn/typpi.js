@@ -10,7 +10,7 @@
 // DOM node variables
 // =============================================================================
 var messageInput, usernameInput, setUsername, chatEntries, chatControls,
-    typingMonitor, userList;
+    typingMonitor, userList, randomNameRequest;
 
 // Setup
 // =============================================================================
@@ -28,8 +28,8 @@ $(function() {
 function renderMessage(msg, username, date)
 {
 	var timestamp = $('<span class="timestamp"></span>').text(date + ' | ');
-	var name = $('<span class="username"></span>').text(sanitize(username) + ' : ');
-	var body = $('<span class="message-body"></span>').text(sanitize(msg));
+	var name = $('<span class="username"></span>').text(username + ' : ');
+	var body = $('<span class="message-body"></span>').append(escapeHTML(msg).autoLink());
 	message = $('<p class="message">').append(timestamp).append(name).append(body).css('color', getColor(username));
 	log(message);
 	updateNotifications();
@@ -78,6 +78,7 @@ function setName()
 	chatControls.show();
 	usernameInput.hide();
 	setUsername.hide();
+	randomNameRequest.hide();
 	loggedIn = true;
 }
 
@@ -150,9 +151,18 @@ function sanitize(input)
 	return $('<div>').text(input).text();
 }
 
+// Hack - uses the DOM, but is faster than chaining .replace()
+function escapeHTML( string )
+{
+    var pre = document.createElement('pre');
+    var text = document.createTextNode(string);
+    pre.appendChild(text);
+    return pre.innerHTML;
+}
+
 var COLORS = [
-'#91004B', '#00918A', '#DB4D00', '#008EDB', '#8C00FF',
-'#8AA600', '#008AA6', '#7A6A9C', '#6E2323'
+	'#91004B', '#00918A', '#DB4D00', '#008EDB', '#8C00FF', '#51BBBD', '#D9B723',
+	'#8AA600', '#008AA6', '#7A6A9C', '#6E2323', '#9C064A', '#D9237E', 
 ];
 
 function getColor(str)
@@ -176,7 +186,7 @@ socket.on('message', function(data)
 
 socket.on('userJoined', function(data)
 {
-	var msg = $('<p class="announcement"></p>').text(data.username + ' sameinaðist alheimssálinni.');
+	var msg = $('<p class="announcement"></p>').text(data.username + ' skráði sig inn á typpi.is');
 	log(msg);
 	numUsersMessage(data);
 	renderUserList(data);
@@ -184,7 +194,7 @@ socket.on('userJoined', function(data)
 
 socket.on('userLeft', function(data)
 {
-	var msg = $('<p class="announcement"></p>').text(data.username + ' yfirgaf hjörðina.');
+	var msg = $('<p class="announcement"></p>').text(data.username + ' yfirgaf typpi.is');
 	log(msg);
 	loggedIn = false;
 	numUsersMessage(data);
@@ -197,6 +207,7 @@ socket.on('login', function(data)
 	numUsersMessage(data);
 	renderUserList(data);
 	log($('<p class="announcement"></p>').text('Velkomin(n) á typpi.is, þú heitir ' + data.username));
+	messageInput.focus();
 })
 
 socket.on('startTyping', function(data)
@@ -209,6 +220,12 @@ socket.on('stopTyping', function(data)
 	stopTyping(data);
 });
 
+// Response from RNG request
+socket.on('serveNickname', function(data)
+{
+	usernameInput.val(data.username);
+	usernameInput.focus();
+});
 
 
 pad = function(number, length)
@@ -221,12 +238,14 @@ pad = function(number, length)
 	return str;
 }
 
+
 // Sequential logic
 // =============================================================================
 $(document).ready(function()
 {
 	messageInput = $('#messageInput');
 	usernameInput = $('#usernameInput');
+	randomNameRequest = $('#randomNameRequest');
 	setUsername = $('#setUsername');
 	chatEntries = $('#chatEntries');
 	chatControls = $('#chatControls');
@@ -238,4 +257,23 @@ $(document).ready(function()
 	{
 	    isTyping();
 	});
+
+	randomNameRequest.on('click', function()
+	{
+		socket.emit('requestNickname');
+	});
+
+	messageInput.on('keydown', function(e)
+	{
+		if (e.keyCode == 13)
+			sendMessage();
+	});
+
+	usernameInput.on('keydown', function(e)
+	{
+		if (e.keyCode == 13)
+			setName();
+	});
+
+	usernameInput.focus();
 });

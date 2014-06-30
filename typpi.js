@@ -10,7 +10,6 @@
 var http = require('http');
 var express = require('express');
 var jade = require('jade');
-var stylus = require('stylus');
 var utils = require('./utils');
 var name = require('./name_generator');
 
@@ -27,12 +26,6 @@ app.set("view options", {layout: false});
 
 // Routing
 app.use(express.static(__dirname + '/public'));
-app.use(stylus.middleware({
-    src: __dirname + '/public'
-    //dest: __dirname + '/public',
-    //debug: true,
-    //force: true
-}));
 
 // Store usernames in an object so we can easily remove on disconnect
 var users = {};
@@ -105,6 +98,11 @@ io.sockets.on('connection', function(socket)
         });
     });
 
+    socket.on('requestNickname', function()
+    {
+        socket.emit('serveNickname', {username: name.random()});
+    });
+
     socket.on('sendMessage', function(message)
     {
         var date = new Date();
@@ -135,4 +133,3 @@ io.sockets.on('connection', function(socket)
         }
     });
 });
-
