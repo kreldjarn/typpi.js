@@ -6,5 +6,4 @@ A bare-bones node.js/socket.io chat server and client. Supports many state-of-th
 To run:
 ```node typpi.js```
 
-To navigate to chat client:
-```http://127.0.0.1:3000```
+Vélamál operates on ```port 3000``` by default.
