@@ -36,6 +36,11 @@ app.get('/', function(req, res)
     res.render('typpi.jade');
 });
 
+app.get('/rng', function(req, res) {
+    res.type('text/plain');
+    res.send(name.random());
+});
+
 server.listen(port);
 
 // Connection
