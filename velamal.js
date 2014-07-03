@@ -37,8 +37,17 @@ app.get('/', function(req, res)
 });
 
 app.get('/rng', function(req, res) {
-    res.type('text/plain');
-    res.send(name.random());
+    res.type('text/json');
+    res.send(JSON.stringify(name.random()));
+});
+app.get('/rng/:name_count', function(req, res) {
+    names = [];
+    for(var i = 0; i < req.param('name_count'); i++)
+    {
+        names.push(name.random());
+    }
+    res.type('text/json');
+    res.send(JSON.stringify(names));
 });
 
 server.listen(port);
