@@ -150,7 +150,8 @@ postfix = ['maður',
            'safi',
            'mergur',
            'bomba',
-           'snúður'];
+           'snúður',
+           'dvergur'];
 
 function generate()
 {

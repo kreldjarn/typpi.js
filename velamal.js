@@ -41,13 +41,22 @@ app.get('/rng', function(req, res) {
     res.send(JSON.stringify(name.random()));
 });
 app.get('/rng/:name_count', function(req, res) {
-    names = [];
-    for(var i = 0; i < req.param('name_count'); i++)
+    var number = req.param('name_count');
+    if (number <= 1337 && number >= 0)
     {
-        names.push(name.random());
+        var names = [];
+        for(var i = 0; i < ; i++)
+        {
+            names.push(name.random());
+        }
+        res.type('text/json');
+        res.send(JSON.stringify(names));
     }
-    res.type('text/json');
-    res.send(JSON.stringify(names));
+    else
+    {
+        res.type('text/json');
+        res.send(JSON.stringify('Ekki töff.'));
+    }
 });
 
 server.listen(port);
