@@ -36,6 +36,29 @@ app.get('/', function(req, res)
     res.render('typpi.jade');
 });
 
+app.get('/rng', function(req, res) {
+    res.type('text/json');
+    res.send(JSON.stringify(name.random()));
+});
+app.get('/rng/:name_count', function(req, res) {
+    var number = req.param('name_count');
+    if (number <= 1337 && number >= 0)
+    {
+        var names = [];
+        for(var i = 0; i < number; i++)
+        {
+            names.push(name.random());
+        }
+        res.type('text/json');
+        res.send(JSON.stringify(names));
+    }
+    else
+    {
+        res.type('text/json');
+        res.send(JSON.stringify('Ekki töff.'));
+    }
+});
+
 server.listen(port);
 
 // Connection

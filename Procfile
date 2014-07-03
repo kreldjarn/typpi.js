@@ -1,1 +1,1 @@
-web: node typpi.js
+web: node velamal.js

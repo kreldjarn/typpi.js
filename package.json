@@ -2,7 +2,7 @@
   "name": "typpi",
   "version": "0.0.0",
   "description": "typpi",
-  "main": "typpi.js",
+  "main": "velamal.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

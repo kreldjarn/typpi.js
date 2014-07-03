@@ -76,7 +76,8 @@ prefix = ['Bjúgna',
           'Þvag',
           'Kleinu',
           'Ástar',
-          'Haturs'];
+          'Haturs',
+          'Kusk'];
 
 postfix = ['maður',
            'sali',
@@ -148,7 +149,9 @@ postfix = ['maður',
            'vessi',
            'safi',
            'mergur',
-           'bomba'];
+           'bomba',
+           'snúður',
+           'dvergur'];
 
 function generate()
 {
@@ -156,7 +159,8 @@ function generate()
            postfix[Math.floor(Math.random() * postfix.length)];
 }
 
-var FORBIDDEN_NAMES = ['Barnaklám', 'blog.central.is/Prinsessa69@hotmail.com'];
+var FORBIDDEN_NAMES = ['Barnaklám', 'blog.central.is/Prinsessa69@hotmail.com',
+    'blog.central.is/land.is'];
 
 exports.random  = function()
 {
