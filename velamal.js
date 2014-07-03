@@ -12,6 +12,7 @@ var express = require('express');
 var jade = require('jade');
 var utils = require('./utils');
 var name = require('./name_generator');
+var sass = require('node-sass');
 
 // Setup
 // =============================================================================
@@ -25,6 +26,12 @@ app.set('view engine', 'jade');
 app.set("view options", {layout: false});
 
 // Routing
+app.use(sass.middleware({
+    src: __dirname + '/public/sass',
+    dest: __dirname + '/public',
+    debug: true,
+    outputStyle: 'compressed'
+}));
 app.use(express.static(__dirname + '/public'));
 
 // Store usernames in an object so we can easily remove on disconnect
