@@ -45,7 +45,7 @@ app.get('/rng/:name_count', function(req, res) {
     if (number <= 1337 && number >= 0)
     {
         var names = [];
-        for(var i = 0; i < ; i++)
+        for(var i = 0; i < number; i++)
         {
             names.push(name.random());
         }
