@@ -270,6 +270,9 @@ $(document).ready(function()
 		$(chatEntriesWrapper).scrollTop(chatEntries.height());
 	});
 
+	$(window).resize(function(){
+		$(chatEntriesWrapper).scrollTop(chatEntries.height());});
+
 	messageInput.on('input', function()
 	{
 	    isTyping();
