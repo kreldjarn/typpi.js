@@ -3,18 +3,26 @@ html
     head
         title typpi.js
         script(src="notify.js")
+        link(href='http://fonts.googleapis.com/css?family=Exo+2:400,500italic,300' rel='stylesheet' type='text/css')
+        link(rel="stylesheet" href="style.css")
+        meta(charset="utf-8")
+
     body
         div.container
+            div
+                div#numUsers
+                div#userListWrapper
+                   div#userList
+
             input(type='text')#usernameInput
             button#randomNameRequest Slembið nafn
-            div#chatEntries
+            
+            div#chatEntriesWrapper
+                div#chatEntries
+            
             div#chatControls
                 input(type='text')#messageInput
             div#typingMonitor
-            div
-                div#numUsers
-                div#userList
-
         script(src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js')
         script(src="/socket.io/socket.io.js")
         script(src="autolink.js")
