@@ -31,7 +31,10 @@ function renderMessage(msg, username, date)
 	var name = $('<span class="username"></span>').text(username);
 	var timestamp = $('<span class="timestamp"></span>').text(date);
 	var body = $('<span class="message-body"></span>').append(escapeHTML(msg).autoLink());
-	message = $('<p class="message">').append(name).append(timestamp).append(body).css('color', getColor(username));
+	message = $('<p class="message hidden">').append(name).append(timestamp).append(body).css('color', getColor(username));
+
+	setTimeout(function() {chatEntries.find(".message.hidden").removeClass("hidden");}, 100);
+
 	log(message);
 	updateNotifications();
 }
