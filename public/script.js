@@ -22,15 +22,16 @@ $(function() {
 	$('#setUsername').on('click', function() {setName();});
 	$('#submit').on('click', function() {sendMessage();});
 });
+var debugLayout = false;
 
 // Functions
 // =============================================================================
 function renderMessage(msg, username, date)
 {
-	var timestamp = $('<span class="timestamp"></span>').text(date + ' | ');
-	var name = $('<span class="username"></span>').text(username + ' : ');
+	var name = $('<span class="username"></span>').text(username);
+	var timestamp = $('<span class="timestamp"></span>').text(date);
 	var body = $('<span class="message-body"></span>').append(escapeHTML(msg).autoLink());
-	message = $('<p class="message">').append(timestamp).append(name).append(body).css('color', getColor(username));
+	message = $('<p class="message">').append(name).append(timestamp).append(body).css('color', getColor(username));
 	log(message);
 	updateNotifications();
 }
@@ -46,9 +47,12 @@ function renderUserList(data)
 	userList.empty();
 	$.each(list, function(key, username)
 	{
-		var p = $('<p></p>').text(username).css('color', getColor(username));
+		var p = $('<div class="userListItem hidden"><div class="bubble"></div><p></p></div>').css('color', getColor(username));
+		p.find(".bubble").css('background', getColor(username));
+		p.find("p").html(username);
 		userList.append(p);
 	});
+	setTimeout(function() {userList.find(".userListItem.hidden").removeClass("hidden");}, 100);
 }
 
 // Writes to the dom
@@ -152,7 +156,7 @@ function sanitize(input)
 }
 
 // Hack - uses the DOM, but is faster than chaining .replace()
-function escapeHTML( string )
+function escapeHTML(string)
 {
     var pre = document.createElement('pre');
     var text = document.createTextNode(string);
@@ -161,8 +165,9 @@ function escapeHTML( string )
 }
 
 var COLORS = [
-	'#91004B', '#00918A', '#DB4D00', '#008EDB', '#8C00FF', '#51BBBD', '#D9B723',
-	'#8AA600', '#008AA6', '#7A6A9C', '#6E2323', '#9C064A', '#D9237E', 
+//	'#91004B', '#00918A', '#DB4D00', '#008EDB', '#8C00FF', '#51BBBD', '#D9B723',
+//	'#8AA600', '#008AA6', '#7A6A9C', '#6E2323', '#9C064A', '#D9237E', 
+	'#4BE8CB', '#F3F16D', '#E086E8', '#F87171', '#71CFF8'
 ];
 
 function getColor(str)
@@ -207,6 +212,7 @@ socket.on('login', function(data)
 	numUsersMessage(data);
 	renderUserList(data);
 	log($('<p class="announcement"></p>').text('Velkomin(n) á typpi.is, þú heitir ' + data.username));
+	messageInput.css('color', getColor(data.username));
 	messageInput.focus();
 })
 
@@ -247,11 +253,19 @@ $(document).ready(function()
 	usernameInput = $('#usernameInput');
 	randomNameRequest = $('#randomNameRequest');
 	setUsername = $('#setUsername');
+	chatEntriesWrapper = $('#chatEntriesWrapper');
 	chatEntries = $('#chatEntries');
 	chatControls = $('#chatControls');
 	typingMonitor = $('#typingMonitor');
 	numUsers = $('#numUsers');
 	userList = $('#userList');
+
+	// When chatEntry DOM contents changes, we scroll to the 
+	// bottom of the div
+	chatEntries.bind("DOMSubtreeModified", function() {
+		console.log("scroll to bottom");
+		$(chatEntriesWrapper).scrollTop(chatEntries.height());
+	});
 
 	messageInput.on('input', function()
 	{
@@ -276,4 +290,15 @@ $(document).ready(function()
 	});
 
 	usernameInput.focus();
+
+	if(debugLayout)
+	{
+		usernameInput.val("Typpaprestur");
+		setName();
+		for(var i = 0; i < 1; i++)
+		{
+			messageInput.val("Blessaður í beinni");
+			sendMessage();
+		}
+	}
 });

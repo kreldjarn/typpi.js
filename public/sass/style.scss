@@ -1,5 +1,159 @@
-body {
-	p {
-		margin-top: 10px;
+@mixin fade
+{
+	transition: all linear 0.1s;
+}
+
+@mixin appear($time)
+{
+	transition: opacity linear $time;
+}
+
+@font-face
+{
+	font-family: 'Avenir';
+	src: url('/Avenir.ttc')
+}
+
+::-webkit-scrollbar { 
+    display: none; 
+}
+
+body
+{
+	font-family: 'Avenir';
+	font-size: 25px;
+	margin: 0px;
+	padding: 0px;
+}
+
+.container
+{
+	max-width: 800px;
+	width: 100%;
+	margin: 20px auto;
+	padding: 20px;
+}
+
+.username, .timestamp
+{
+	font-size: 0.6em;
+}
+
+.timestamp
+{
+	margin-left: 10px;
+}
+
+#chatEntriesWrapper
+{
+	height: 400px;
+	overflow: scroll;
+}
+
+#chatEntries
+{
+
+}
+
+#userListWrapper
+{
+
+	margin-left: -20px;
+	height: 120px;
+	overflow: auto;
+	overflow-y: hidden;
+
+	#userList
+	{
+		white-space: nowrap;
+
+		.userListItem
+		{
+			z-index: -1;
+			@include appear(2s);
+			opacity: 1;
+			
+			width: 120px;
+			margin-right: -40px;
+	
+			display: inline-block;
+	
+			p
+			{
+				text-align: center;
+				@include fade;
+				opacity: 0;
+	
+	
+				font-size: 0.5em;
+			}
+	
+			&:hover p
+			{
+				opacity: 1;
+			}
+	
+			&.hidden
+			{
+				opacity: 0;
+			}
+	
+			.bubble
+			{
+				margin: auto;
+				display: block;
+				width: 64px;
+				height: 64px;
+				border-radius: 32px;
+			}
+		}
 	}
+}
+
+.message
+{
+	@include appear(0.2s);
+	opacity: 1;
+
+	&.hidden
+	{
+		opacity: 0;
+	}
+
+	.timestamp
+	{
+		@include fade;
+		opacity: 0;
+	}
+
+	&:hover
+	{
+		.timestamp
+		{
+			opacity: 1;
+		}
+	}
+
+	.message-body
+	{
+		display: block;
+	}
+}
+
+#numUsers
+{
+	display: none;
+}
+
+#messageInput
+{
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	box-shadow: inset  0 0 15px rgba(0, 0, 0, 0.1);
+	font-family: inherit;
+	font-size: inherit;
+	outline: 0; 
+	margin-left: -10px;
+	width: calc(100% - 40px);
 }
