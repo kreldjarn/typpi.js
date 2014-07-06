@@ -214,16 +214,10 @@ socket.on('login', function(data)
 {
 	numUsersMessage(data);
 	renderUserList(data);
-	console.log("here?")
 	var history = data.history;
-	console.log("here!")
-	console.log(history);
 	for (var i = 0; i < history.length; i++)
 	{
 		if(history[i] == null) continue;
-		console.log(history[i].message);
-		console.log(history[i].username);
-		console.log(history[i].datetime);
 		renderMessage(history[i].message, history[i].username, history[i].datetime);
 	}
 	log($('<p class="announcement"></p>').text('Velkomin(n) á typpi.is, þú heitir ' + data.username));
@@ -278,7 +272,6 @@ $(document).ready(function()
 	// When chatEntry DOM contents changes, we scroll to the 
 	// bottom of the div
 	chatEntries.bind("DOMSubtreeModified", function() {
-		console.log("scroll to bottom");
 		$(chatEntriesWrapper).scrollTop(chatEntries.height());
 	});
 
