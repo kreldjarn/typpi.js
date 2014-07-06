@@ -189,7 +189,8 @@ function getColor(str)
 // =============================================================================
 socket.on('message', function(data)
 {
-	renderMessage(data.message, data.username, data.datetime);
+	if (loggedIn)
+		renderMessage(data.message, data.username, data.datetime);
 });
 
 socket.on('userJoined', function(data)
@@ -214,9 +215,16 @@ socket.on('login', function(data)
 {
 	numUsersMessage(data);
 	renderUserList(data);
+	console.log("here?")
 	var history = data.history;
-	for (var i in history)
+	console.log("here!")
+	console.log(history);
+	for (var i = 0; i < history.length; i++)
 	{
+		if(history[i] == null) continue;
+		console.log(history[i].message);
+		console.log(history[i].username);
+		console.log(history[i].datetime);
 		renderMessage(history[i].message, history[i].username, history[i].datetime);
 	}
 	log($('<p class="announcement"></p>').text('Velkomin(n) á typpi.is, þú heitir ' + data.username));

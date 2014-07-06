@@ -107,7 +107,7 @@ io.sockets.on('connection', function(socket)
         var history = [];
         for (var i = 0; i < MAX_MSG; i++)
         {
-            history[i] = messages[(i + latestMessage - 1) % MAX_MSG];
+            history[i] = messages[(latestMessage + i) % MAX_MSG];
         }
         // Echo locally
         socket.emit('login', {
@@ -158,7 +158,7 @@ io.sockets.on('connection', function(socket)
         socket.broadcast.emit('stopTyping', {
             username: socket.username
         });
-        console.log(data.username + ": " + data.message);
+        console.log(socket.username + ": " + message);
     });
 
     socket.on('disconnect', function ()
