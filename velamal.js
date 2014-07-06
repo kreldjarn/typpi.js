@@ -37,6 +37,10 @@ app.use(express.static(__dirname + '/public'));
 // Store usernames in an object so we can easily remove on disconnect
 var users = {};
 var numUsers = 0;
+// Store messages sent in a circular buffer
+var messages = [];
+var latestMessage = 0;
+var MAX_MSG = 50;
 
 app.get('/', function(req, res)
 {
@@ -99,11 +103,18 @@ io.sockets.on('connection', function(socket)
         ++numUsers;
         loggedIn = true;
 
+        // Create a shifted message history where newest message starts at 0
+        var history = [];
+        for (var i = 0; i < MAX_MSG; i++)
+        {
+            history[i] = messages[(i + latestMessage - 1) % MAX_MSG];
+        }
         // Echo locally
         socket.emit('login', {
             username: socket.username,
             users: users,
-            numUsers: numUsers
+            numUsers: numUsers,
+            history: history
         });
         // Echo globally
         socket.broadcast.emit('userJoined', {
@@ -137,11 +148,13 @@ io.sockets.on('connection', function(socket)
     socket.on('sendMessage', function(message)
     {
         var date = new Date();
-        var date = date.getHours() + ":" + utils.pad(date.getMinutes(), 2);
-        var data = {message: message,
-            username: socket.username,
-            datetime: date};
-        socket.broadcast.emit('message', data);
+        date = date.getHours() + ":" + utils.pad(date.getMinutes(), 2);
+
+        messages[latestMessage] = {message: message,
+                                   datetime: date,
+                                   username: socket.username};
+        socket.broadcast.emit('message', messages[latestMessage]);
+        latestMessage = (latestMessage + 1) % MAX_MSG;
         socket.broadcast.emit('stopTyping', {
             username: socket.username
         });
