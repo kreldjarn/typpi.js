@@ -208,7 +208,6 @@ socket.on('userLeft', function(data)
 {
 	var msg = $('<p class="announcement"></p>').text(data.username + ' yfirgaf typpi.is');
 	log(msg);
-	loggedIn = false;
 	numUsersMessage(data);
 	renderUserList(data);
 	stopTyping(data);
