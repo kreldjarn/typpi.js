@@ -77,7 +77,9 @@ prefix = ['Bjúgna',
           'Kleinu',
           'Ástar',
           'Haturs',
-          'Kusk'];
+          'Kusk',
+          'Kvart',
+          'Salernis'];
 
 postfix = ['maður',
            'sali',

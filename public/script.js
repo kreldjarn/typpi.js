@@ -30,7 +30,11 @@ function renderMessage(msg, username, date)
 {
 	var name = $('<span class="username"></span>').text(username);
 	var timestamp = $('<span class="timestamp"></span>').text(date);
-	var body = $('<span class="message-body"></span>').append(escapeHTML(msg).autoLink());
+	var body = $('<span class="message-body"></span>').append(escapeHTML(msg).autoLink({target: "_blank", callback: function(url) {
+			// Render images rather than link to them
+    		return /\.(gif|png|jpe?g)$/i.test(url) ? '<img src="' + url + '">' : null;
+  		}
+  	}));
 	message = $('<p class="message hidden">').append(name).append(timestamp).append(body).css('color', getColor(username));
 
 	setTimeout(function() {chatEntries.find(".message.hidden").removeClass("hidden");}, 100);
@@ -186,7 +190,8 @@ function getColor(str)
 // =============================================================================
 socket.on('message', function(data)
 {
-	renderMessage(data['message'], data['username'], data['datetime']);
+	if (loggedIn)
+		renderMessage(data.message, data.username, data.datetime);
 });
 
 socket.on('userJoined', function(data)
@@ -201,7 +206,6 @@ socket.on('userLeft', function(data)
 {
 	var msg = $('<p class="announcement"></p>').text(data.username + ' yfirgaf typpi.is');
 	log(msg);
-	loggedIn = false;
 	numUsersMessage(data);
 	renderUserList(data);
 	stopTyping(data);
@@ -211,6 +215,12 @@ socket.on('login', function(data)
 {
 	numUsersMessage(data);
 	renderUserList(data);
+	var history = data.history;
+	for (var i = 0; i < history.length; i++)
+	{
+		if(history[i] == null) continue;
+		renderMessage(history[i].message, history[i].username, history[i].datetime);
+	}
 	log($('<p class="announcement"></p>').text('Velkomin(n) á typpi.is, þú heitir ' + data.username));
 	messageInput.css('color', getColor(data.username));
 	messageInput.focus();
@@ -263,7 +273,6 @@ $(document).ready(function()
 	// When chatEntry DOM contents changes, we scroll to the 
 	// bottom of the div
 	chatEntries.bind("DOMSubtreeModified", function() {
-		console.log("scroll to bottom");
 		$(chatEntriesWrapper).scrollTop(chatEntries.height());
 	});
 
