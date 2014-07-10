@@ -153,7 +153,8 @@ postfix = ['maður',
            'mergur',
            'bomba',
            'snúður',
-           'dvergur'];
+           'dvergur',
+           'hnoðri'];
 
 function generate()
 {
@@ -164,7 +165,7 @@ function generate()
 var FORBIDDEN_NAMES = ['Barnaklám', 'blog.central.is/Prinsessa69@hotmail.com',
     'blog.central.is/land.is'];
 
-exports.random  = function()
+exports.random = function()
 {
     do
         name = generate();

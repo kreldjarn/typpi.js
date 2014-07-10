@@ -14,14 +14,10 @@ var messageInput, usernameInput, setUsername, chatEntries, chatControls,
 
 // Setup
 // =============================================================================
-var socket = io.connect();
+//var socket = io.connect('https://typpi.herokuapp.com', {secure: true});
+var socket = io.connect('', {secure: true});
 var loggedIn = false;
 var typing = false;
-$(function() {
-	$('#chatControls').hide();
-	$('#setUsername').on('click', function() {setName();});
-	$('#submit').on('click', function() {sendMessage();});
-});
 var debugLayout = false;
 
 // Functions
@@ -86,10 +82,7 @@ function setName()
 	name = sanitize(usernameInput.val());
 	// If no name is selected, a random name will be generated
 	socket.emit('setUsername', name);
-	chatControls.show();
-	usernameInput.hide();
-	setUsername.hide();
-	randomNameRequest.hide();
+	renderMessageView();
 	loggedIn = true;
 }
 
@@ -245,8 +238,13 @@ socket.on('serveNickname', function(data)
 	usernameInput.focus();
 });
 
+socket.on('droppedConnection', function()
+{
+	renderLoginView();
+});
 
-pad = function(number, length)
+
+function pad(number, length)
 {
 	var str = '' + number;
 	while (str.length < length)
@@ -254,6 +252,16 @@ pad = function(number, length)
 	    str = '0' + str;
 	}
 	return str;
+}
+
+function renderLoginView()
+{
+
+}
+
+function renderMessageView()
+{
+
 }
 
 
@@ -272,6 +280,11 @@ $(document).ready(function()
 	numUsers = $('#numUsers');
 	userList = $('#userList');
 
+
+	renderLoginView();
+
+	$('#setUsername').on('click', function() {setName();});
+	$('#submit').on('click', function() {sendMessage();});
 	// When chatEntry DOM contents changes, we scroll to the 
 	// bottom of the div
 	chatEntries.bind("DOMSubtreeModified", function() {

@@ -127,6 +127,7 @@ io.sockets.on('connection', function(socket)
     // Broadcast when user starts typing
     socket.on('startTyping', function ()
     {
+        if isConnectionDropped(socket) return;
         socket.broadcast.emit('startTyping', {
             username: socket.username
         });
@@ -147,6 +148,7 @@ io.sockets.on('connection', function(socket)
 
     socket.on('sendMessage', function(message)
     {
+        if isConnectionDropped(socket) return;
         var date = new Date();
         date = date.getHours() + ":" + utils.pad(date.getMinutes(), 2);
 
@@ -177,3 +179,13 @@ io.sockets.on('connection', function(socket)
         }
     });
 });
+
+function isConnectionDropped(socket)
+{
+    if (socket.username === undefined)
+    {
+        socket.emit('droppedConnection')
+        return true;
+    }
+    return false;
+}
