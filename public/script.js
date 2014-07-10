@@ -9,7 +9,7 @@
 
 // DOM node variables
 // =============================================================================
-var messageInput, usernameInput, setUsername, chatEntries, chatControls,
+var messageInput, chatEntries, chatControls,
     typingMonitor, userList, randomNameRequest;
 
 // Setup
@@ -17,12 +17,14 @@ var messageInput, usernameInput, setUsername, chatEntries, chatControls,
 //var socket = io.connect('https://typpi.herokuapp.com', {secure: true});
 var socket = io.connect('', {secure: true});
 var loggedIn = false;
+var color;
 var typing = false;
 var debugLayout = false;
 
+
 // Functions
 // =============================================================================
-function renderMessage(msg, username, date)
+function renderMessage(msg, username, date, color)
 {
 	var name = $('<span class="username"></span>').text(username);
 	var timestamp = $('<span class="timestamp"></span>').text(date);
@@ -31,9 +33,8 @@ function renderMessage(msg, username, date)
     		return /\.(gif|png|jpe?g)$/i.test(url) ? '<img src="' + url + '">' : null;
   		}
   	}));
-	message = $('<p class="message hidden">').append(name).append(timestamp).append(body).css('color', getColor(username));
-
-	setTimeout(function() {chatEntries.find(".message.hidden").removeClass("hidden");}, 100);
+	message = $('<p class="message hidden">').append(name).append(timestamp).append(body).css('color', color);
+	setTimeout(function() {$('#chatEntries').find(".message.hidden").removeClass("hidden");}, 100);
 
 	log(message);
 	updateNotifications();
@@ -41,18 +42,19 @@ function renderMessage(msg, username, date)
 
 function numUsersMessage(data)
 {
-	numUsers.text('Notendur: ' + data.numUsers);
+	$('#numUsers').text('Notendur: ' + data.numUsers);
 }
 
 function renderUserList(data)
 {
+	var userList = $('#userList');
 	list = data.users;
 	userList.empty();
-	$.each(list, function(key, username)
+	$.each(list, function(key, value)
 	{
-		var p = $('<div class="userListItem hidden"><div class="bubble"></div><p></p></div>').css('color', getColor(username));
-		p.find(".bubble").css('background', getColor(username));
-		p.find("p").html(username);
+		var p = $('<div class="userListItem hidden"><div class="bubble"></div><p></p></div>').css('color', value.color);
+		p.find(".bubble").css('background', value.color);
+		p.find("p").html(value.username);
 		userList.append(p);
 	});
 	setTimeout(function() {userList.find(".userListItem.hidden").removeClass("hidden");}, 100);
@@ -61,25 +63,25 @@ function renderUserList(data)
 // Writes to the dom
 function log(data)
 {
-	chatEntries.append(data);
+	$('#chatEntries').append(data);
 }
 
 function sendMessage()
 {
-	msg = sanitize(messageInput.val());
+	msg = sanitize($('#messageInput').val());
 	if (msg != '') 
 	{
-		var date = new Date();
-        var date = date.getHours() + ":" + pad(date.getMinutes(), 2);
+		//var date = new Date();
+        //var date = date.getHours() + ":" + pad(date.getMinutes(), 2);
 		socket.emit('sendMessage', msg);
-		renderMessage(msg, 'Ég', date);
-		messageInput.val('');
+		//renderMessage(msg, 'Ég', date, color);
+		$('#messageInput').val('');
 	}
 }
 
 function setName()
 {
-	name = sanitize(usernameInput.val());
+	name = sanitize($('#usernameInput').val());
 	// If no name is selected, a random name will be generated
 	socket.emit('setUsername', name);
 	renderMessageView();
@@ -99,6 +101,7 @@ function updateNotifications()
 // =============================================================================
 function startTyping(data)
 {
+	var typingMonitor = $('#typingMonitor');
 	var msg = $('<p class="typing message"></p>')
 				.text(data.username + ' er að skrifa')
 				.data('username', data.username);
@@ -185,8 +188,9 @@ function getColor(str)
 // =============================================================================
 socket.on('message', function(data)
 {
+	console.log(data)
 	if (loggedIn)
-		renderMessage(data.message, data.username, data.datetime);
+		renderMessage(data.message, data.username, data.datetime, data.color);
 });
 
 socket.on('userJoined', function(data)
@@ -208,16 +212,19 @@ socket.on('userLeft', function(data)
 
 socket.on('login', function(data)
 {
+	color = data.color;
 	numUsersMessage(data);
 	renderUserList(data);
 	var history = data.history;
 	for (var i = 0; i < history.length; i++)
 	{
 		if(history[i] == null) continue;
-		renderMessage(history[i].message, history[i].username, history[i].datetime);
+		renderMessage(history[i].message, history[i].username, history[i].datetime, history[i].color);
 	}
 	log($('<p class="announcement"></p>').text('Velkomin(n) á typpi.is, þú heitir ' + data.username));
-	messageInput.css('color', getColor(data.username));
+	
+	var messageInput = $('#messageInput');
+	messageInput.css('color', data.color);
 	messageInput.focus();
 })
 
@@ -234,6 +241,7 @@ socket.on('stopTyping', function(data)
 // Response from RNG request
 socket.on('serveNickname', function(data)
 {
+	var usernameInput = $('#usernameInput');
 	usernameInput.val(data.username);
 	usernameInput.focus();
 });
@@ -256,12 +264,38 @@ function pad(number, length)
 
 function renderLoginView()
 {
-
+	var c = $('.container');
+	c.empty();
+	var input = $('<input type="text" id="usernameInput" />');
+	var button = $('<button id="randomNameRequest">Slembið nafn</button>');
+	c.append(input);
+	c.append(button);
 }
 
 function renderMessageView()
 {
+	var c = $('.container');
+	c.empty();
+	var userListDiv = $('<div></div>');
+	var numUsers = $('<div id="numUsers"></div>');
+	var userListWrapper = $('<div id="userListWrapper"></div>');
+	var userList = $('<div id="userList"></div>');
+	userListWrapper.append(userList);
+	userListDiv.append(numUsers);
+	userListDiv.append(userListWrapper);
 
+	var wrapper = $('<div id="chatEntriesWrapper"></div>');
+	var entries = $('<div id="chatEntries"></div>');
+	var controls = $('<div id="chatControl"></div>');
+	var input = $('<input type="text" id="messageInput" />');
+	var monitor =$('<div id="typingMonitor"></div>');
+	wrapper.append(entries);
+	controls.append(input);
+	c.append(userListDiv);
+	c.append(wrapper);
+	c.append(controls);
+	c.append(monitor);
+	input.focus();
 }
 
 
@@ -269,10 +303,6 @@ function renderMessageView()
 // =============================================================================
 $(document).ready(function()
 {
-	messageInput = $('#messageInput');
-	usernameInput = $('#usernameInput');
-	randomNameRequest = $('#randomNameRequest');
-	setUsername = $('#setUsername');
 	chatEntriesWrapper = $('#chatEntriesWrapper');
 	chatEntries = $('#chatEntries');
 	chatControls = $('#chatControls');
@@ -280,43 +310,42 @@ $(document).ready(function()
 	numUsers = $('#numUsers');
 	userList = $('#userList');
 
+	var container = $('.container');
 
 	renderLoginView();
 
-	$('#setUsername').on('click', function() {setName();});
-	$('#submit').on('click', function() {sendMessage();});
+	$(window).resize(function(){
+		$('#chatEntriesWrapper').scrollTop($('#chatEntries').height());});
+
 	// When chatEntry DOM contents changes, we scroll to the 
 	// bottom of the div
-	chatEntries.bind("DOMSubtreeModified", function() {
-		$(chatEntriesWrapper).scrollTop(chatEntries.height());
-	});
-
-	$(window).resize(function(){
-		$(chatEntriesWrapper).scrollTop(chatEntries.height());});
-
-	messageInput.on('input', function()
+	container.on('DOMSubtreeModified', '#chatEntriesWrapper', function()
 	{
-	    isTyping();
+		$(this).scrollTop($('#chatEntries').height());
 	});
 
-	randomNameRequest.on('click', function()
+	container.on('input', '#messageInput', function()
+	{
+		isTyping();
+	});
+
+	container.on('click', '#randomNameRequest', function()
 	{
 		socket.emit('requestNickname');
 	});
 
-	messageInput.on('keydown', function(e)
+	container.on('keydown', '#messageInput', function(e)
 	{
 		if (e.keyCode == 13)
 			sendMessage();
 	});
 
-	usernameInput.on('keydown', function(e)
+	container.on('keydown', '#usernameInput', function(e)
 	{
 		if (e.keyCode == 13)
 			setName();
 	});
 
-	usernameInput.focus();
 
 	if(debugLayout)
 	{

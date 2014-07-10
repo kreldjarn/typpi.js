@@ -73,33 +73,44 @@ app.get('/rng/:name_count', function(req, res) {
 
 server.listen(port);
 
+
 // Connection
 // =============================================================================
 
 io.sockets.on('connection', function(socket)
 {
     var loggedIn = false;
-
+    socket.isConnectionDropped = function()
+    {
+        if (socket.username === undefined)
+        {
+            socket.emit('droppedConnection')
+            return true;
+        }
+        return false;
+    }
     socket.on('setUsername', function(username)
     {
         // If user is changing their name
         if (loggedIn)
         {
-            delete users[socket.username];
+            delete users[socket.id];
             --numUsers;
-            socket.broadcast.emit('userLeft', {
+            io.sockets.connected[users[u].id].emit('userLeft', {
                 username: socket.username,
                 numUsers: numUsers
             });
         }
         if (username === '') username = name.random();
         // Check if username already exists within user pool
-        while (users[username])
-        {
-            username = name.random();
-        }
+        //while (users[username])
+        //{
+        //    username = name.random();
+        //}
         socket.username = username;
-        users[username] = username;
+        users[socket.id] = {id: socket.id,
+                            username: username,
+                            color: utils.getColor()};
         ++numUsers;
         loggedIn = true;
 
@@ -114,31 +125,42 @@ io.sockets.on('connection', function(socket)
             username: socket.username,
             users: users,
             numUsers: numUsers,
-            history: history
+            history: history,
+            color: users[socket.id].color
         });
-        // Echo globally
-        socket.broadcast.emit('userJoined', {
-            username: socket.username,
-            users: users,
-            numUsers: numUsers
-        });
+        // Echo to logged-in users
+        for (var u in users)
+        {
+            io.sockets.connected[users[u].id].emit('userJoined', {
+                username: socket.username,
+                users: users,
+                numUsers: numUsers
+            });
+        }
     });
 
     // Broadcast when user starts typing
     socket.on('startTyping', function ()
     {
-        if isConnectionDropped(socket) return;
-        socket.broadcast.emit('startTyping', {
-            username: socket.username
-        });
+        if (socket.isConnectionDropped()) return;
+        for (var u in users)
+        {
+            if (!users[u].id == socket.id)
+                io.sockets.connected[users[u].id].emit('startTyping', {
+                    username: socket.username
+                });
+        }
     });
     
     // Broadcast when user stops typing
     socket.on('stopTyping', function ()
     {
-        socket.broadcast.emit('stopTyping', {
-            username: socket.username
-        });
+        for (var u in users)
+        {
+            io.sockets.connected[users[u].id].emit('stopTyping', {
+                username: socket.username
+            });
+        }
     });
 
     socket.on('requestNickname', function()
@@ -148,18 +170,23 @@ io.sockets.on('connection', function(socket)
 
     socket.on('sendMessage', function(message)
     {
-        if isConnectionDropped(socket) return;
+        if (socket.isConnectionDropped()) return;
         var date = new Date();
         date = date.getHours() + ":" + utils.pad(date.getMinutes(), 2);
 
         messages[latestMessage] = {message: message,
                                    datetime: date,
-                                   username: socket.username};
-        socket.broadcast.emit('message', messages[latestMessage]);
+                                   username: socket.username,
+                                   color: users[socket.id].color};
+
+        for (var u in users)
+        {
+            io.sockets.connected[users[u].id].emit('message', messages[latestMessage]);
+            io.sockets.connected[users[u].id].emit('stopTyping', {
+                username: socket.username
+            });
+        }
         latestMessage = (latestMessage + 1) % MAX_MSG;
-        socket.broadcast.emit('stopTyping', {
-            username: socket.username
-        });
         console.log(socket.username + ": " + message);
     });
 
@@ -168,24 +195,18 @@ io.sockets.on('connection', function(socket)
         // Remove the username from global usernames list
         if (loggedIn)
         {
-            delete users[socket.username];
+            delete users[socket.id];
             --numUsers;
     
-            socket.broadcast.emit('userLeft', {
-                username: socket.username,
-                users: users,
-                numUsers: numUsers
-            });
+            for (var u in users)
+            {
+                io.sockets.connected[users[u].id].emit('userLeft', {
+                    username: socket.username,
+                    users: users,
+                    numUsers: numUsers
+                });
+            }
         }
     });
 });
 
-function isConnectionDropped(socket)
-{
-    if (socket.username === undefined)
-    {
-        socket.emit('droppedConnection')
-        return true;
-    }
-    return false;
-}
